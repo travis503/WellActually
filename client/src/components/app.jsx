@@ -5,6 +5,8 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
+
 
 const axios = require('axios');
 
@@ -17,10 +19,25 @@ const axios = require('axios');
 export default function App() {
   const [userState, updateUserState] = useState('pending');
   const [currentCard, updateCurrentCard] = useState({
-    category: 'No card selected',
+    category: 'No category',
     cardPrompt: 'No card prompt',
     cardAnswer: 'No card answer',
   });
+
+  const [formCard, updateFormCard] = useState({
+    category: 'No category',
+    cardPrompt: 'No card prompt',
+    cardAnswer: 'No card answer',
+  });
+
+  // const [formPrompt, updateFormPrompt] = useState({
+  //   cardPrompt: 'No card prompt',
+  // });
+
+  // const [formAnswer, updateFormAnswer] = useState({
+  //   cardAnswer: 'No card answer',
+  // });
+
 
   useEffect(() => {
     console.log('User state: ', userState);
@@ -41,6 +58,26 @@ export default function App() {
     })
   }
 
+  const handleChange = (event) => {
+    updateFormCard(
+      {
+      ...formCard,
+      [event.target.name]: event.target.value
+      }
+    )
+  }
+
+  const handleSubmit = () => {
+    console.log('Submitting new card: ', formCard);
+    axios.post('/addCard', formCard)
+    .then((response) => {
+      console.log('Card posted!');
+    })
+    .catch((error) => {
+      console.log('Card failed to post: ', error);
+    })
+  }
+
   return (
     <>
       <Button onClick={() => updateUserState("host")}>I wanna host!</Button><br />
@@ -54,6 +91,13 @@ export default function App() {
         </CardContent>
       </Card>
       <Button onClick={() => getNewCard()}>Get new card!</Button>
+
+      <form onSubmit={() => submitCard}>
+        <TextField id="formCardCategory" label="Category" name="category" onChange={handleChange}></TextField><br />
+        <TextField id="formCardPrompt" label="Prompt" name="cardPrompt" onChange={handleChange}></TextField><br />
+        <TextField id="formCardAnswer" label="Answer" name="cardAnswer" onChange={handleChange}></TextField><br />
+      </form>
+      <Button onClick={handleSubmit}>Submit card!</Button>
     </>
   )
 }
