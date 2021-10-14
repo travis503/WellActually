@@ -13,8 +13,15 @@ app.use(express.json());
 app.get('/', (req, res) => res.send('Hello World!'));
 
 app.get('/newCard', (req, res) => {
-  console.log('Sending: ', testCard);
-  res.send(testCard);
+  var randomCard = collection.aggregate([{$sample: {size: 1}}]).next()
+  .then((randomCard) => {
+    console.log('Returning card: ', randomCard);
+    res.send(randomCard);
+  })
+  .catch((error) => {
+    console.log('Error selecting random card: ', error);
+    res.send(error);
+  })
 })
 
 app.post('/addCard', (req, res) => {

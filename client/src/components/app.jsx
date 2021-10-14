@@ -6,7 +6,12 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-
+import UserStateButtons from './UserStateButtons.jsx';
+import CardDisplay from './CardDisplay.jsx';
+import AddNewCardButton from './AddNewCardButton.jsx';
+import PlayerCard from './PlayerCard.jsx';
+import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
 
 const axios = require('axios');
 
@@ -17,27 +22,12 @@ const axios = require('axios');
 // var W3CWebSocket = require('websocket').w3cwebsocket;
 
 export default function App() {
-  const [userState, updateUserState] = useState('pending');
+  const [userState, updateUserState] = useState('host');
   const [currentCard, updateCurrentCard] = useState({
-    category: 'No category',
-    cardPrompt: 'No card prompt',
-    cardAnswer: 'No card answer',
+    category: 'Star Wars',
+    cardPrompt: 'In Star Wars, Han Solo\'s confrontation with Greedo the Rodian ended spectacularly when Greedo missed a blaster shot at Han, who responded with lethal accuracy.',
+    cardAnswer: 'Han shot first!',
   });
-
-  const [formCard, updateFormCard] = useState({
-    category: 'No category',
-    cardPrompt: 'No card prompt',
-    cardAnswer: 'No card answer',
-  });
-
-  // const [formPrompt, updateFormPrompt] = useState({
-  //   cardPrompt: 'No card prompt',
-  // });
-
-  // const [formAnswer, updateFormAnswer] = useState({
-  //   cardAnswer: 'No card answer',
-  // });
-
 
   useEffect(() => {
     console.log('User state: ', userState);
@@ -48,9 +38,9 @@ export default function App() {
     .then((newCardData) => {
       console.log('Received card data: ', newCardData);
       updateCurrentCard({
-        category: newCardData.data.testCard.category,
-        cardPrompt: newCardData.data.testCard.cardPrompt,
-        cardAnswer: newCardData.data.testCard.cardAnswer,
+        category: newCardData.data.category,
+        cardPrompt: newCardData.data.cardPrompt,
+        cardAnswer: newCardData.data.cardAnswer,
       })
     })
     .catch((error) => {
@@ -58,46 +48,25 @@ export default function App() {
     })
   }
 
-  const handleChange = (event) => {
-    updateFormCard(
-      {
-      ...formCard,
-      [event.target.name]: event.target.value
-      }
-    )
-  }
-
-  const handleSubmit = () => {
-    console.log('Submitting new card: ', formCard);
-    axios.post('/addCard', formCard)
-    .then((response) => {
-      console.log('Card posted!');
-    })
-    .catch((error) => {
-      console.log('Card failed to post: ', error);
-    })
-  }
-
   return (
     <>
-      <Button onClick={() => updateUserState("host")}>I wanna host!</Button><br />
-      <Button onClick={() => updateUserState("player")}>Lemme play!</Button><br />
-
-      <Card>
-        <CardContent>
-          <Typography>Category: {currentCard.category}</Typography>
-          <Typography>{currentCard.cardPrompt}</Typography>
-          <Typography>Answer: {currentCard.cardAnswer}</Typography>
-        </CardContent>
-      </Card>
-      <Button onClick={() => getNewCard()}>Get new card!</Button>
-
-      <form onSubmit={() => submitCard}>
-        <TextField id="formCardCategory" label="Category" name="category" onChange={handleChange}></TextField><br />
-        <TextField id="formCardPrompt" label="Prompt" name="cardPrompt" onChange={handleChange}></TextField><br />
-        <TextField id="formCardAnswer" label="Answer" name="cardAnswer" onChange={handleChange}></TextField><br />
-      </form>
-      <Button onClick={handleSubmit}>Submit card!</Button>
+      <Container>
+        <Typography variant="h1" align='center'>Well, Technically...!</Typography><br/>
+        <UserStateButtons userState={userState} updateUserState={updateUserState} />
+        <CardDisplay userState={userState} currentCard={currentCard} getNewCard={getNewCard} />
+        <AddNewCardButton userState={userState} />
+        <Grid container spacing={5} alignItems="center">
+          <Grid item xs={4} sm={4} md={4} ls={4} xl={4}>
+            <PlayerCard player={1} />
+          </Grid>
+          <Grid item xs={4} sm={4} md={4} ls={4} xl={4}>
+            <PlayerCard player={2} />
+          </Grid>
+          <Grid item xs={4} sm={4} md={4} ls={4} xl={4}>
+            <PlayerCard player={3} />
+          </Grid>
+        </Grid>
+      </Container>
     </>
   )
 }
