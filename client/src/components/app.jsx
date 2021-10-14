@@ -54,7 +54,7 @@ export default function App() {
         <Typography variant="h1" align='center'>Well, Technically...!</Typography><br/>
         <UserStateButtons userState={userState} updateUserState={updateUserState} />
         <CardDisplay userState={userState} currentCard={currentCard} getNewCard={getNewCard} />
-        <AddNewCardButton userState={userState} />
+        {/* <AddNewCardButton userState={userState} /> */}
         <Grid container spacing={5} alignItems="center">
           <Grid item xs={4} sm={4} md={4} ls={4} xl={4}>
             <PlayerCard player={1} />
